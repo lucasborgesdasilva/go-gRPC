@@ -28,7 +28,7 @@ const (
 //
 // Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
 type CategoryServiceClient interface {
-	GetCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CategoryResponse, error)
+	GetCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*Category, error)
 }
 
 type categoryServiceClient struct {
@@ -39,9 +39,9 @@ func NewCategoryServiceClient(cc grpc.ClientConnInterface) CategoryServiceClient
 	return &categoryServiceClient{cc}
 }
 
-func (c *categoryServiceClient) GetCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CategoryResponse, error) {
+func (c *categoryServiceClient) GetCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*Category, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryResponse)
+	out := new(Category)
 	err := c.cc.Invoke(ctx, CategoryService_GetCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (c *categoryServiceClient) GetCategory(ctx context.Context, in *CreateCateg
 //
 // Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
 type CategoryServiceServer interface {
-	GetCategory(context.Context, *CreateCategoryRequest) (*CategoryResponse, error)
+	GetCategory(context.Context, *CreateCategoryRequest) (*Category, error)
 	mustEmbedUnimplementedCategoryServiceServer()
 }
 
@@ -66,7 +66,7 @@ type CategoryServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCategoryServiceServer struct{}
 
-func (UnimplementedCategoryServiceServer) GetCategory(context.Context, *CreateCategoryRequest) (*CategoryResponse, error) {
+func (UnimplementedCategoryServiceServer) GetCategory(context.Context, *CreateCategoryRequest) (*Category, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
 }
 func (UnimplementedCategoryServiceServer) mustEmbedUnimplementedCategoryServiceServer() {}

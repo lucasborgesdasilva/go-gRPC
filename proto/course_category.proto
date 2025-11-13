@@ -23,6 +23,6 @@ message CategoryResponse {
 
 // Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
 service CategoryService {
-    rpc GetCategory (CreateCategoryRequest) returns (CategoryResponse) {}
+    rpc GetCategory (CreateCategoryRequest) returns (Category) {}
 }
 
