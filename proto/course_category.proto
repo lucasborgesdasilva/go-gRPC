@@ -12,7 +12,6 @@ message Category {
     string description = 3; //Campo description do tipo string.
 }
 
-//Definimos a nossa requisição de criação de categoria.
 message CreateCategoryRequest {
     string name = 1;
     string description = 2;
@@ -22,9 +21,14 @@ message CategoryList {
     repeated Category categories = 1; //Lista de categorias.
 }
 
-// Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
+message CategoryGetRequest {
+    string id = 1;
+}
+
+// Serviço de Categoria onde ele possui os métodos que podem ser chamados remotamente.
 service CategoryService {
     rpc CreateCategory (CreateCategoryRequest) returns (Category) {}
     rpc ListCategories (blank) returns (CategoryList) {}
+    rpc GetCategory (CategoryGetRequest) returns (Category) {}
 }
 

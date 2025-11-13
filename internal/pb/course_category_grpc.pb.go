@@ -21,16 +21,18 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	CategoryService_CreateCategory_FullMethodName = "/pb.CategoryService/CreateCategory"
 	CategoryService_ListCategories_FullMethodName = "/pb.CategoryService/ListCategories"
+	CategoryService_GetCategory_FullMethodName    = "/pb.CategoryService/GetCategory"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
+// Serviço de Categoria onde ele possui os métodos que podem ser chamados remotamente.
 type CategoryServiceClient interface {
 	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*Category, error)
 	ListCategories(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*CategoryList, error)
+	GetCategory(ctx context.Context, in *CategoryGetRequest, opts ...grpc.CallOption) (*Category, error)
 }
 
 type categoryServiceClient struct {
@@ -61,14 +63,25 @@ func (c *categoryServiceClient) ListCategories(ctx context.Context, in *Blank, o
 	return out, nil
 }
 
+func (c *categoryServiceClient) GetCategory(ctx context.Context, in *CategoryGetRequest, opts ...grpc.CallOption) (*Category, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Category)
+	err := c.cc.Invoke(ctx, CategoryService_GetCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CategoryServiceServer is the server API for CategoryService service.
 // All implementations must embed UnimplementedCategoryServiceServer
 // for forward compatibility.
 //
-// Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
+// Serviço de Categoria onde ele possui os métodos que podem ser chamados remotamente.
 type CategoryServiceServer interface {
 	CreateCategory(context.Context, *CreateCategoryRequest) (*Category, error)
 	ListCategories(context.Context, *Blank) (*CategoryList, error)
+	GetCategory(context.Context, *CategoryGetRequest) (*Category, error)
 	mustEmbedUnimplementedCategoryServiceServer()
 }
 
@@ -84,6 +97,9 @@ func (UnimplementedCategoryServiceServer) CreateCategory(context.Context, *Creat
 }
 func (UnimplementedCategoryServiceServer) ListCategories(context.Context, *Blank) (*CategoryList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
+}
+func (UnimplementedCategoryServiceServer) GetCategory(context.Context, *CategoryGetRequest) (*Category, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
 }
 func (UnimplementedCategoryServiceServer) mustEmbedUnimplementedCategoryServiceServer() {}
 func (UnimplementedCategoryServiceServer) testEmbeddedByValue()                         {}
@@ -142,6 +158,24 @@ func _CategoryService_ListCategories_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CategoryService_GetCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).GetCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_GetCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).GetCategory(ctx, req.(*CategoryGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CategoryService_ServiceDesc is the grpc.ServiceDesc for CategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -156,6 +190,10 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCategories",
 			Handler:    _CategoryService_ListCategories_Handler,
+		},
+		{
+			MethodName: "GetCategory",
+			Handler:    _CategoryService_GetCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
