@@ -29,6 +29,7 @@ message CategoryGetRequest {
 service CategoryService {
     rpc CreateCategory (CreateCategoryRequest) returns (Category) {}
     rpc CreateCategoryStream (stream CreateCategoryRequest) returns (CategoryList) {} //Método de streaming onde o cliente pode enviar múltiplas categorias.
+    rpc CreateCategoryStreamBidirectional (stream CreateCategoryRequest) returns (stream Category) {} //Método de streaming bidirecional onde o cliente e o servidor podem enviar múltiplas mensagens.
     rpc ListCategories (blank) returns (CategoryList) {}
     rpc GetCategory (CategoryGetRequest) returns (Category) {}
 }
