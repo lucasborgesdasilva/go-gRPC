@@ -3,6 +3,8 @@ syntax = "proto3"; //Precisamos passar a versão do proto que vamos utilizar.
 package pb; //Definimos o package do proto, que será utilizado na geração dos arquivos.
 option go_package = "internal/pb"; //Definimos o local onde os arquivos gerados serão salvos/instalados.
 
+message blank {} //Mensagem vazia que pode ser utilizada quando não precisamos enviar dados.
+
 //Definimos a mensagem category com seus campos. Cada campo possui um tipo e um número único. 
 message Category {
     string id = 1; //Campo id do tipo string.
@@ -16,13 +18,13 @@ message CreateCategoryRequest {
     string description = 2;
 }
 
-//Definimos a nossa resposta de requisição de categoria.
-message CategoryResponse {
-    Category category = 1;
+message CategoryList {
+    repeated Category categories = 1; //Lista de categorias.
 }
 
 // Serviço de Categoria onde ele possui o método GetCategory que recebe uma CreateCategoryRequest e retorna uma CategoryResponse.
 service CategoryService {
-    rpc GetCategory (CreateCategoryRequest) returns (Category) {}
+    rpc CreateCategory (CreateCategoryRequest) returns (Category) {}
+    rpc ListCategories (blank) returns (CategoryList) {}
 }
 
